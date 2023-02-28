@@ -39,47 +39,6 @@ struct TrendingResult: Codable, Hashable {
     let video: Bool?
     let voteAverage: Double?
     
-//    var posterUrlString: String? {
-//        if let posterPath = posterPath {
-//            return "https://image.tmdb.org/t/p/w300\(posterPath)"
-//        }
-//        return nil
-//    }
-//
-//    var backUrlString: String? {
-//        if let backdropPath = backdropPath {
-//            return "https://image.tmdb.org/t/p/w500\(backdropPath)"
-//        }
-//        return nil
-//    }
-//
-//    var moviesId: String? {
-//        if let id = id {
-//            return "https://api.themoviedb.org/3/movie/\(id)?api_key=b621e030f5e5548ff84999cf7b668c13&language=en-US"
-//        }
-//        return nil
-//    }
-//
-//
-//
-//    var formattedReleaseDate: Date? {
-//        if let releaseDate = releaseDate {
-//            let dateFormatter = DateFormatter()
-//            dateFormatter.dateFormat = "YYYY-MM-DD"
-//            return dateFormatter.date(from: releaseDate)
-//        }
-//        return nil
-//    }
-//
-//    var releaseYear: String? {
-//        if let date = formattedReleaseDate {
-//            let dateFormatter = DateFormatter()
-//            dateFormatter.locale = Locale(identifier: "en_us")
-//            dateFormatter.dateFormat = "MMMM yyyy"
-//            return dateFormatter.string(from: date)
-//        }
-//        return nil
-//    }
     
     enum CodingKeys: String, CodingKey {
         
