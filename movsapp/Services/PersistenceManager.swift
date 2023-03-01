@@ -20,43 +20,40 @@ enum PersistenceManager {
     
     static func updateWith(favoritedMovie: MoviesResult, actionType: PersistenceActionType, completed: @escaping (ModelErrorMovies) -> Void) {
         
-        retrieveFavorites { result in
-            switch result {
-            case .success(var favorites):
-                switch actionType {
-                case .add:
-                    guard !favorites.contains(favoritedMovie) else {
-                        completed(.alreadyInFavorites)
-                        return
+        retrieveFavorites { (favorites) in
+            if var favorites {
+                    switch actionType {
+                    case .add:
+                        guard !favorites.contains(favoritedMovie) else {
+                            completed(.alreadyInFavorites)
+                            return
+                        }
+                        favorites.append(favoritedMovie)
+                        
+                    case .remove:
+                        favorites.removeAll {$0.title == favoritedMovie.title}
                     }
-                    favorites.append(favoritedMovie)
-                    
-                case .remove:
-                    favorites.removeAll {$0.title == favoritedMovie.title}
-                }
-                completed(save(favoritedMovies: favorites))
-                
-            case .failure(let error):
-                completed(error)
-                print("error favorites")
+                    completed(save(favoritedMovies: favorites))
+            } } onError: { error in
+                completed(.unableToFavorite)
             }
-        }
     }
-    
-    
-    static func retrieveFavorites(completed: @escaping (Result<[MoviesResult], ModelErrorMovies>) -> Void) {
+
+
+
+    static func retrieveFavorites(onComplete: @escaping ([MoviesResult]?) -> Void, onError: (ModelErrorMovies) -> Void) {
         
         guard let favoritesData = defaults.object(forKey: Keys.favouritesKey) as? Data else {
-            completed(.success([]))
+            onComplete([])
             return
         }
         
         do {
             let decoder = JSONDecoder()
             let favorites = try decoder.decode([MoviesResult].self, from: favoritesData)
-            completed(.success(favorites))
+            onComplete(favorites)
         } catch {
-            completed(.failure(.unableToFavorite))
+            onError(.unableToFavorite)
             print("unableToFavorite. error - inside retrieveFavorites")
         }
     }

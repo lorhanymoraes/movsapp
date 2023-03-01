@@ -17,7 +17,8 @@ class DetailsViewController: UIViewController {
     @IBOutlet var ivBackground: UIImageView!
     @IBOutlet var ivPoster: UIImageView!
     @IBOutlet var lbTitle: UILabel!
-    @IBOutlet var lbGenre: UILabel!
+    @IBOutlet var lbGenre1: UILabel!
+    @IBOutlet var lbGenre2: UILabel!
     @IBOutlet var lbOverview: UILabel!
     @IBOutlet var lbScore: UILabel!
     @IBOutlet var lbYear: UILabel!
@@ -26,31 +27,55 @@ class DetailsViewController: UIViewController {
     @IBOutlet var ivProvider1: UIImageView!
     @IBOutlet var ivProvider2: UIImageView!
     @IBOutlet var btExit: UIButton!
+    @IBOutlet var btFavorite: UIButton!
+    @IBOutlet var lbRunTime: UILabel!
+    @IBOutlet var viewsGenres: [UIView]!
     @IBOutlet var viewGenre: UIView!
     @IBOutlet var viewTrailer: UIView!
     
     var infoMovies: MoviesResult?
     var infotop10: TrendingResult?
-    var infoProviders: FlatrateResponse?
-    var providers: ProvidersResponse?
-    var providederes: [FlatrateResponse] = []
+//    var movieDetails : MovieDetailsResponse?
+    var favoritesMovie = [MoviesResult]()
+    var isMovieFav = UserDefaults.standard.bool(forKey: "favorites2")
     
     override func viewDidLoad() {
         super.viewDidLoad()
         detailsViewPresenter.delegate = self
         detailsViewPresenter.getGenre()
-        detailsViewPresenter.getProviders()
+        detailsViewPresenter.getMovieInfo()
         viewConfiguration()
         imagesConfiguration()
         formattedStrings()
+        getFavorites()
+        changeButton()
 
     }
-   
     
-    @IBAction func returnPage(_ sender: Any) {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil);
-        guard let viewController = storyboard.instantiateViewController(withIdentifier: "InitialViewController") as? UIViewController else {return}
-        self.present(viewController, animated: true, completion: nil);
+    @IBAction func btCloseTab(_ sender: Any) {
+        dismiss(animated: true)
+    }
+    
+    @IBAction func btActionFavorite(_ sender: UIButton) {
+        NetworkServicesMovies.shared.getMovieInfo(movieID: infoMovies?.id ?? infotop10?.id ?? 0, onComplete: { (movie) in
+           
+            if let movie = movie {
+                
+                dump(movie)
+                self.addMovieToFavorites(with: movie)
+                self.btFavorite.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+            }
+            
+        })  { (error) in
+            switch error {
+            case .unableToFavorite:
+                print("\(ModelErrorMovies.unableToFavorite)")
+            default:
+                print(error)
+                
+            }
+        }
+
     }
     
     func viewConfiguration() {
@@ -59,9 +84,13 @@ class DetailsViewController: UIViewController {
         lbOverview.text = infoMovies?.overview ?? infotop10?.overview
         loading.stopAnimating()
         
-        viewGenre.layer.cornerRadius = 20
-        viewGenre.layer.borderColor = UIColor.gray.cgColor
-        viewGenre.layer.borderWidth = 1
+        viewsGenres.forEach { view in
+            view.layer.cornerRadius = 10
+            view.layer.borderColor = UIColor.white.cgColor
+            view.layer.borderWidth = 1
+        
+            lbRunTime.text = String(infoMovies?.runtime ?? 0) + " min"
+        }
     }
     
     func formattedStrings() {
@@ -73,26 +102,26 @@ class DetailsViewController: UIViewController {
             return nil
         }
         self.lbScore.text = voteAverageString
-
-    
-    var formattedReleaseDate: Date? {
-        if let releaseDate = infoMovies?.releaseDate ?? infotop10?.releaseDate {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "YYYY-MM-DD"
-            return dateFormatter.date(from: releaseDate)
+        
+        
+        var formattedReleaseDate: Date? {
+            if let releaseDate = infoMovies?.releaseDate ?? infotop10?.releaseDate {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "YYYY-MM-DD"
+                return dateFormatter.date(from: releaseDate)
+            }
+            return nil
         }
-        return nil
-    }
-    
-    var releaseYear: String? {
-        if let date = formattedReleaseDate {
-            let dateFormatter = DateFormatter()
-            dateFormatter.locale = Locale(identifier: "en_us")
-            dateFormatter.dateFormat = "MMMM yyyy"
-            return dateFormatter.string(from: date)
+        
+        var releaseYear: String? {
+            if let date = formattedReleaseDate {
+                let dateFormatter = DateFormatter()
+                dateFormatter.locale = Locale(identifier: "en_us")
+                dateFormatter.dateFormat = "MMMM yyyy"
+                return dateFormatter.string(from: date)
+            }
+            return nil
         }
-        return nil
-    }
         self.lbYear.text = releaseYear
         
     }
@@ -135,43 +164,62 @@ class DetailsViewController: UIViewController {
         let genres = detailsViewPresenter.allGenres?.genres.filter({ genre in
             genresIds?.contains(genre.id) ?? false
         })
-        
-        let genresName = genres?.map({ genre in
+
+        var genresName = genres?.map({ genre in
             genre.name
         })
         
-        self.lbGenre.text = genresName?.joined(separator: " / ")
+        lbGenre1.text = genresName?.first
+        lbGenre2.text = genresName?.last
+
     }
     
-    func providerImageConfig() {
+    
+    func getFavorites() {
         
-        ivProvider1.layer.cornerRadius = 10
-        
-        var providerImageString: String? {
-            if let providerInfo = infoProviders?.logoPath {
-                return "https://image.tmdb.org/t/p/w500\(providerInfo)"
-            }
-            return nil
+        PersistenceManager.retrieveFavorites { favorites in
+            self.favoritesMovie = favorites ?? []
+        } onError: { error in
+            print(error.localizedDescription)
         }
-        
-        if let providerURL = URL(string: providerImageString ?? " ") {
-            ivProvider1.kf.indicatorType = .activity
-            ivProvider1.kf.setImage(with: providerURL)
-        } else {
-            ivProvider1.image = nil
+
+    }
+    
+    func isMovieFavorited() -> Bool {
+        favoritesMovie.contains { favorito in
+            favorito.id == infoMovies?.id
         }
     }
+    
+    
+    func changeButton() {
+        if isMovieFavorited() {
+            btFavorite.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+        } else {
+            return
+        }
+    }
+    
+    
+    func addMovieToFavorites(with movie: MoviesResult) {
+        
+        let favoritedMovie = MoviesResult(posterPath: movie.posterPath, adult: movie.adult, overview: movie.overview, releaseDate: movie.releaseDate, genreIds: infoMovies?.genreIds, id: movie.id, originalTitle: movie.originalTitle, originalLanguage: movie.originalTitle, title: movie.title, backdropPath: movie.backdropPath, popularity: movie.popularity, voteCount: movie.voteCount, video: movie.video, voteAverage: movie.voteAverage, runtime: movie.runtime)
+
+        
+        PersistenceManager.updateWith(favoritedMovie: favoritedMovie, actionType: .add) { [weak self] error in
+            guard self != nil else { return }
+            
+            guard error != nil else {
+                return
+            }
+            
+        }
+    }
+    
 
 }
 
 extension DetailsViewController: DetailsViewPresenterDelegate {
-    func presentReturnView() {
-        
-    }
-    
-    func loadProviders() {
-        providerImageConfig()
-    }
     
     func filterGenres() {
         filterGenresConfig()
@@ -179,4 +227,5 @@ extension DetailsViewController: DetailsViewPresenterDelegate {
     
     
 }
+
 

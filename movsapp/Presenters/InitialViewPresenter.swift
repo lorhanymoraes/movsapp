@@ -125,10 +125,11 @@ class InitialViewPresenter {
             let spinner = UIActivityIndicatorView(style: .medium)
             spinner.startAnimating()
             spinner.frame = CGRect(x: CGFloat(0), y: CGFloat(0), width: tableView.bounds.width, height: CGFloat(44))
-            spinner.color = .purple
+            spinner.color = .yellow
             
             tableView.tableFooterView = spinner
             tableView.tableFooterView?.isHidden = false
         }
     }
 }
+

@@ -1,5 +1,5 @@
 //
-//  TrendingMoviesResponse.swift
+//  TrendingResponse.swift
 //  movsapp
 //
 //  Created by Lorhany Moraes on 31/01/23.
@@ -38,6 +38,7 @@ struct TrendingResult: Codable, Hashable {
     let voteCount: Int?
     let video: Bool?
     let voteAverage: Double?
+    let runtime: Int?
     
     
     enum CodingKeys: String, CodingKey {
@@ -56,6 +57,7 @@ struct TrendingResult: Codable, Hashable {
         case voteCount = "vote_count"
         case video
         case voteAverage = "vote_average"
+        case runtime
         
     }
 }

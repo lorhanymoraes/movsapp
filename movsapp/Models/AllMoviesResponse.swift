@@ -21,7 +21,6 @@ struct AllMoviesResponse: Codable {
     }
 }
 
-
 struct MoviesResult: Codable, Hashable {
     
     let posterPath: String?
@@ -38,7 +37,7 @@ struct MoviesResult: Codable, Hashable {
     let voteCount: Int?
     let video: Bool?
     let voteAverage: Double?
-    
+    let runtime: Int?
     
     enum CodingKeys: String, CodingKey {
         
@@ -56,6 +55,7 @@ struct MoviesResult: Codable, Hashable {
         case voteCount = "vote_count"
         case video
         case voteAverage = "vote_average"
+        case runtime
         
     }
 }
