@@ -58,7 +58,6 @@ struct TrendingResult: Codable, Hashable {
         case video
         case voteAverage = "vote_average"
         case runtime
-        
     }
 }
 

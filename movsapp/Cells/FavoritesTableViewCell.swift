@@ -43,6 +43,27 @@ class FavoritesTableViewCell: UITableViewCell {
         } else {
             ivFavorite.image = nil
         }
+        ivFavorite.layer.cornerRadius = 10
+        
+        var formattedReleaseDate: Date? {
+            if let releaseDate = favorite.releaseDate {
+                let dateFormatter = DateFormatter()
+                dateFormatter.dateFormat = "YYYY-MM-DD"
+                return dateFormatter.date(from: releaseDate)
+            }
+            return nil
+        }
+        
+        var releaseYear: String? {
+            if let date = formattedReleaseDate {
+                let dateFormatter = DateFormatter()
+                dateFormatter.locale = Locale(identifier: "en_us")
+                dateFormatter.dateFormat = "MMMM yyyy"
+                return dateFormatter.string(from: date)
+            }
+            return nil
+        }
+        self.lbYear.text = releaseYear
     }
 
 }

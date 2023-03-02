@@ -24,8 +24,8 @@ class DetailsViewController: UIViewController {
     @IBOutlet var lbYear: UILabel!
     @IBOutlet var loading: UIActivityIndicatorView!
     @IBOutlet var viewScore: UIView!
-    @IBOutlet var ivProvider1: UIImageView!
-    @IBOutlet var ivProvider2: UIImageView!
+    @IBOutlet var ivCompanies: UIImageView!
+
     @IBOutlet var btExit: UIButton!
     @IBOutlet var btFavorite: UIButton!
     @IBOutlet var lbRunTime: UILabel!
@@ -38,6 +38,7 @@ class DetailsViewController: UIViewController {
 //    var movieDetails : MovieDetailsResponse?
     var favoritesMovie = [MoviesResult]()
     var isMovieFav = UserDefaults.standard.bool(forKey: "favorites2")
+    var infoComapanies: ProductionCompanies?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -50,6 +51,10 @@ class DetailsViewController: UIViewController {
         getFavorites()
         changeButton()
 
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        changeButton()
     }
     
     @IBAction func btCloseTab(_ sender: Any) {
@@ -83,20 +88,20 @@ class DetailsViewController: UIViewController {
         lbTitle.text = infoMovies?.originalTitle ?? infotop10?.originalTitle ?? " "
         lbOverview.text = infoMovies?.overview ?? infotop10?.overview
         loading.stopAnimating()
+        lbRunTime.text = String(infoMovies?.runtime ?? infotop10?.runtime ?? 0) + " min"
         
         viewsGenres.forEach { view in
             view.layer.cornerRadius = 10
             view.layer.borderColor = UIColor.white.cgColor
             view.layer.borderWidth = 1
         
-            lbRunTime.text = String(infoMovies?.runtime ?? 0) + " min"
         }
     }
     
     func formattedStrings() {
         
         var voteAverageString: String? {
-            if let vote = infoMovies?.voteAverage ?? infotop10?.voteAverage?.rounded() {
+            if let vote = infoMovies?.voteAverage?.rounded() ?? infotop10?.voteAverage?.rounded() {
                 return String(vote)
             }
             return nil
@@ -143,19 +148,33 @@ class DetailsViewController: UIViewController {
             return nil
         }
         
-        if let urlPoster = URL(string: backUrlString ?? " ") {
+        var companiesUrlString: String? {
+            if let companies =  infoComapanies?.logoPath {
+                return "https://image.tmdb.org/t/p/w500\(companies)"
+            }
+            return nil
+        }
+        
+        if let urlBackdrop = URL(string: backUrlString ?? " ") {
             ivBackground.kf.indicatorType = .activity
-            ivBackground.kf.setImage(with: urlPoster)
+            ivBackground.kf.setImage(with: urlBackdrop)
         } else {
             ivBackground.image = nil
         }
         ivPoster.layer.cornerRadius = 15
         
-        if let url = URL(string: posterUrlString ?? " ") {
+        if let urlPoster = URL(string: posterUrlString ?? " ") {
             ivPoster.kf.indicatorType = .activity
-            ivPoster.kf.setImage(with: url)
+            ivPoster.kf.setImage(with: urlPoster)
         } else {
             ivPoster.image = nil
+        }
+        
+        if let urlCompanies = URL(string: companiesUrlString ?? " ") {
+            ivCompanies.kf.indicatorType = .activity
+            ivCompanies.kf.setImage(with: urlCompanies)
+        } else {
+            ivCompanies.image = nil
         }
     }
     
@@ -175,14 +194,31 @@ class DetailsViewController: UIViewController {
     }
     
     
+//    func getFavorites() {
+//
+//        PersistenceManager.retrieveFavorites { favorites in
+//            self.favoritesMovie = favorites ?? []
+//        } onError: { error in
+//            print(error.localizedDescription)
+//        }
+//
+//    }
+//
     func getFavorites() {
-        
-        PersistenceManager.retrieveFavorites { favorites in
-            self.favoritesMovie = favorites ?? []
-        } onError: { error in
-            print(error.localizedDescription)
-        }
 
+        PersistenceManager.retrieveFavorites { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let favorites):
+        
+                self.favoritesMovie = favorites
+                
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+            
+        }
     }
     
     func isMovieFavorited() -> Bool {
@@ -203,7 +239,7 @@ class DetailsViewController: UIViewController {
     
     func addMovieToFavorites(with movie: MoviesResult) {
         
-        let favoritedMovie = MoviesResult(posterPath: movie.posterPath, adult: movie.adult, overview: movie.overview, releaseDate: movie.releaseDate, genreIds: infoMovies?.genreIds, id: movie.id, originalTitle: movie.originalTitle, originalLanguage: movie.originalTitle, title: movie.title, backdropPath: movie.backdropPath, popularity: movie.popularity, voteCount: movie.voteCount, video: movie.video, voteAverage: movie.voteAverage, runtime: movie.runtime)
+        let favoritedMovie = MoviesResult(posterPath: movie.posterPath, adult: movie.adult, overview: movie.overview, releaseDate: movie.releaseDate, genreIds: infoMovies?.genreIds, id: movie.id, originalTitle: movie.originalTitle, originalLanguage: movie.originalTitle, title: movie.title, backdropPath: movie.backdropPath, popularity: movie.popularity, voteCount: movie.voteCount, video: movie.video, voteAverage: movie.voteAverage, runtime: movie.runtime, productionCompanies: [ProductionCompanies(name: infoComapanies?.name, id: infoComapanies?.id, logoPath: infoComapanies?.logoPath)])
 
         
         PersistenceManager.updateWith(favoritedMovie: favoritedMovie, actionType: .add) { [weak self] error in
