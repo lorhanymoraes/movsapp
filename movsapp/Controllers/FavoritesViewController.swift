@@ -11,8 +11,8 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     
     var favoritesViewPresenter = FavoritesViewPresenter()
     
-    @IBOutlet var topView: UIView!
-    @IBOutlet var tableViewFavorites: UITableView!
+    @IBOutlet weak var topView: UIView!
+    @IBOutlet weak var tableViewFavorites: UITableView!
     
     var lbNoFavorites: UILabel?
     var favoritedMovies: [MoviesResult] = []
@@ -27,9 +27,9 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        favoritesViewPresenter.getFavorites()
         tableViewFavorites.reloadData()
         getFavorites()
+        labelNoFavorites()
     }
     
     func setupView() {
@@ -38,19 +38,18 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
         tableViewFavorites.delegate = self
         tableViewFavorites.dataSource = self
     }
-
+    
     func labelNoFavorites() {
-        let lbNoFavorites = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
-        lbNoFavorites.center = CGPoint(x: 200, y: 400)
-        lbNoFavorites.text = "No Movies?\nSearch and add a new one"
-        lbNoFavorites.textAlignment = .center
-        lbNoFavorites.adjustsFontSizeToFitWidth = true
-        lbNoFavorites.numberOfLines = 0
-        lbNoFavorites.textColor = .white
-        lbNoFavorites.font = UIFont.preferredFont(forTextStyle: .footnote)
+        lbNoFavorites = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
+        lbNoFavorites?.center = CGPoint(x: 200, y: 400)
+        lbNoFavorites?.text = "No Movies?\nSearch and add a new one"
+        lbNoFavorites?.textAlignment = .center
+        lbNoFavorites?.adjustsFontSizeToFitWidth = true
+        lbNoFavorites?.numberOfLines = 0
+        lbNoFavorites?.textColor = .white
+        lbNoFavorites?.font = UIFont.preferredFont(forTextStyle: .footnote)
         
     }
-    
     
     @IBAction func btUnfavorite(_ sender: UIButton) {
         
@@ -70,7 +69,6 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
             }
         }
     }
-    
     
     func updateUI(with favoritedMovies: [MoviesResult]) {
         if favoritedMovies.isEmpty {
@@ -107,9 +105,9 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
         return favoritedMovies.count
     }
     
-     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        let cell = tableView.dequeueReusableCell(withIdentifier: "favoritesCell", for: indexPath) as! FavoritesTableViewCell
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "favoritesCell", for: indexPath) as? FavoritesTableViewCell else { return .init()}
         
         let favoritedMovie = favoritedMovies[indexPath.row]
         cell.setTextAndImageFor(favorite: favoritedMovie)
@@ -117,33 +115,19 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
         return cell
     }
     
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let viewController = segue.destination as? DetailsViewController else {return}
-        let favoriteMovie = favoritedMovies[tableViewFavorites.indexPathForSelectedRow!.row]
-        viewController.infoMovies = favoriteMovie
+        let favoriteMovie = favoritedMovies[tableViewFavorites.indexPathForSelectedRow?.row ?? 0]
+        viewController.detailsViewPresenter.moviesInfo = favoriteMovie
         navigationController?.pushViewController(viewController, animated: true)
         
     }
-
     
-//    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//
-//        if favoritesViewPresenter.favoritedMovies.count > 0 {
-//             return favoritesViewPresenter.favoritedMovies.count
-//        } else {
-//            tableView.backgroundView = lbNoFavorites
-//        }
-//        return favoritesViewPresenter.numberOfRowsInSection(_section: section)
-//    }
-//
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        return favoritesViewPresenter.tableView(tableView, cellForRowAt: indexPath)
-//    }
-
 }
 
 extension FavoritesViewController: FavoritesViewPresenterDelegate {
-    func loadFavorites() {
+    func loadFavorites(with: [MoviesResult]) {
         updateUI(with: favoritedMovies)
     }
     

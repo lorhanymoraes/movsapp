@@ -17,15 +17,15 @@ class InitialViewPresenter {
     
     var delegate: InitialViewPresenterDelegate?
     var allMovies: AllMoviesResponse?
-    var trendingResponse: TrendingResponse?
+    var trendingResponse: AllMoviesResponse?
     var loadingMovies = false
     var currentPage = 1
     var limit = 20
     var offset = 0
     var total = 0
     var moviesResult: [MoviesResult] = []
+    var trendingMovies: [MoviesResult] = []
     var moviesInfo: MoviesResult?
-    var trendingMovies: [TrendingResult] = []
     
     func getAllMovies() {
         loadingMovies = true
@@ -44,7 +44,6 @@ class InitialViewPresenter {
                 print("JSON Inválido")
             default:
                 print(error)
-                
             }
         }
     }
@@ -59,26 +58,22 @@ class InitialViewPresenter {
                 self.loadingMovies = false
                 self.delegate?.reloadCollectionViewTopRated()
             }
-            
         })  { (error) in
             switch error {
             case .invalidJSON:
                 print("JSON Inválido")
             default:
                 print(error)
-                
             }
         }
-
     }
-    
   
     func numberOfRowsInSection(_section: Int) -> Int {
         return moviesResult.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "all movies cell", for: indexPath) as? MoviesTableViewCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "allMoviesCell", for: indexPath) as? MoviesTableViewCell else { return UITableViewCell() }
         
        let allMovies = (moviesResult[indexPath.row]) 
         
@@ -92,7 +87,7 @@ class InitialViewPresenter {
     }
     
     func setupTopRatedCollectionCell(_ collectionView: UICollectionView, indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "top10 cell", for: indexPath) as? TopCollectionViewCell else {return .init()}
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "top10cell", for: indexPath) as? TopCollectionViewCell else {return .init()}
         let topRated = (trendingMovies[indexPath.row])
         cell.prepareCell(with: topRated)
         cell.lbNumber.text = "\(indexPath.row+1)"
@@ -100,7 +95,6 @@ class InitialViewPresenter {
         return cell
     }
 
-    
     func scrollViewDidEndDragging(_ tableView: UITableView,_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         print("scrollViewDidEndDragging")
         if ((tableView.contentOffset.y + tableView.frame.size.height) >= tableView.contentSize.height)
@@ -114,7 +108,6 @@ class InitialViewPresenter {
 
             }
         }
-
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {

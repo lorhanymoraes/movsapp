@@ -11,7 +11,7 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     var initialViewPresenter = InitialViewPresenter()
     
-    @IBOutlet var topView: UIView!
+    @IBOutlet weak var topView: UIView!
     @IBOutlet weak var collectionViewTop10: UICollectionView!
     @IBOutlet weak var tableViewAllMovies: UITableView!
     
@@ -43,25 +43,24 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
     func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
         return initialViewPresenter.scrollViewDidEndDragging(tableViewAllMovies, scrollView, willDecelerate: decelerate)
     }
-
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         return initialViewPresenter.tableView(tableView, willDisplay: cell, forRowAt: indexPath)
     }
     
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "segue all books" {
+        if segue.identifier == "segueAllBooks" {
             guard let controller = segue.destination as? DetailsViewController else {return}
             let showDetail = initialViewPresenter.allMovies?.results?[tableViewAllMovies.indexPathForSelectedRow?.row ?? 0]
-            controller.infoMovies = showDetail
-            
+            controller.detailsViewPresenter.moviesInfo = showDetail
+
         } else {
             guard let controller = segue.destination as? DetailsViewController else {return}
             let showTop10 = initialViewPresenter.trendingResponse?.results?[collectionViewTop10.indexPathsForSelectedItems?.first?.row ?? 0]
-            controller.infotop10 = showTop10
+            controller.detailsViewPresenter.moviesInfo = showTop10
         }
     }
-    
-    
 }
 
 extension InitialViewController: InitialViewPresenterDelegate {
@@ -72,12 +71,10 @@ extension InitialViewController: InitialViewPresenterDelegate {
     func reloadTableViewAllMovies() {
         tableViewAllMovies.reloadData()
     }
-    
-    
 }
 
 extension InitialViewController: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-   
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return initialViewPresenter.numberOfRowsInSectionForCollectionTopRated(section)
     }
@@ -85,8 +82,6 @@ extension InitialViewController: UICollectionViewDelegate, UICollectionViewDataS
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         return initialViewPresenter.setupTopRatedCollectionCell(collectionView, indexPath: indexPath)
     }
-    
-    
 }
 
 

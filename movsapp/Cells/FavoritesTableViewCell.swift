@@ -12,7 +12,7 @@ class FavoritesTableViewCell: UITableViewCell {
     
     
     @IBOutlet var lbTitle: UILabel!
-    @IBOutlet var lbYear: UILabel!
+    @IBOutlet var lbRuntime: UILabel!
     @IBOutlet var lbFavorite: UIButton!
     @IBOutlet var ivFavorite: UIImageView!
     
@@ -21,18 +21,27 @@ class FavoritesTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
     }
     
     func setTextAndImageFor(favorite: MoviesResult) {
         lbTitle.text = favorite.originalTitle
         
+        var lbRuntimeString: String? {
+            if let runtime = favorite.runtime {
+                return String(runtime)
+            }
+            return nil
+        }
+        
+        lbRuntime.text = "Runtime: " + (lbRuntimeString ?? " ") + " min"
+        
         var posterUrlString: String? {
             if let posterPath = favorite.posterPath {
-                return "https://image.tmdb.org/t/p/w300\(posterPath)"
+                return "https://image.tmdb.org/t/p/w500\(posterPath)"
             }
             return nil
         }
@@ -44,26 +53,6 @@ class FavoritesTableViewCell: UITableViewCell {
             ivFavorite.image = nil
         }
         ivFavorite.layer.cornerRadius = 10
-        
-        var formattedReleaseDate: Date? {
-            if let releaseDate = favorite.releaseDate {
-                let dateFormatter = DateFormatter()
-                dateFormatter.dateFormat = "YYYY-MM-DD"
-                return dateFormatter.date(from: releaseDate)
-            }
-            return nil
-        }
-        
-        var releaseYear: String? {
-            if let date = formattedReleaseDate {
-                let dateFormatter = DateFormatter()
-                dateFormatter.locale = Locale(identifier: "en_us")
-                dateFormatter.dateFormat = "MMMM yyyy"
-                return dateFormatter.string(from: date)
-            }
-            return nil
-        }
-        self.lbYear.text = releaseYear
     }
-
+    
 }

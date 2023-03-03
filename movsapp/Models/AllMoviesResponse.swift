@@ -38,7 +38,6 @@ struct MoviesResult: Codable, Hashable {
     let video: Bool?
     let voteAverage: Double?
     let runtime: Int?
-    let productionCompanies: [ProductionCompanies]?
     
     enum CodingKeys: String, CodingKey {
         
@@ -57,19 +56,5 @@ struct MoviesResult: Codable, Hashable {
         case video
         case voteAverage = "vote_average"
         case runtime
-        case productionCompanies = "production_companies"
     }
-}
-
-struct ProductionCompanies: Codable, Hashable {
-    let name: String?
-    let id: Int?
-    let logoPath: String?
-    
-    enum CodinKeysPC: String, CodingKey {
-        case name
-        case id
-        case logoPath = "logo_path"
-    }
-
 }

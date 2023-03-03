@@ -59,26 +59,6 @@ enum PersistenceManager {
             print("unableToFavorite. error - inside retrieveFavorites")
         }
     }
-
-
-
-//    static func retrieveFavorites(onComplete: @escaping ([MoviesResult]?) -> Void, onError: (ModelErrorMovies) -> Void) {
-//
-//        guard let favoritesData = defaults.object(forKey: Keys.favouritesKey) as? Data else {
-//            onComplete([])
-//            return
-//        }
-//
-//        do {
-//            let decoder = JSONDecoder()
-//            let favorites = try decoder.decode([MoviesResult].self, from: favoritesData)
-//            onComplete(favorites)
-//        } catch {
-//            onError(.unableToFavorite)
-//            print("unableToFavorite. error - inside retrieveFavorites")
-//        }
-//    }
-    
     
     static func save(favoritedMovies: [MoviesResult]) -> ModelErrorMovies {
         do {
@@ -90,5 +70,4 @@ enum PersistenceManager {
             return .unableToFavorite
         }
     }
-    
 }

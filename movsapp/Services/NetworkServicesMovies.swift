@@ -15,7 +15,6 @@ class NetworkServicesMovies {
     static private let apiKey = "b621e030f5e5548ff84999cf7b668c13"
     static private let language = "en-US"
     static private let watchRegion = "BR"
-    private class Dummy {}
     
     func loadAllMovie(page: Int = 1, onComplete: @escaping (AllMoviesResponse?) -> Void, onError: @escaping (ModelErrorMovies) -> Void) {
         let url = NetworkServicesMovies.baseURL + "/movie/popular?api_key=\(NetworkServicesMovies.apiKey)&language=\(NetworkServicesMovies.language)&page=\(page)"
@@ -46,7 +45,7 @@ class NetworkServicesMovies {
         }
     }
     
-    func loadTopRated(page: Int = 1, onComplete: @escaping (TrendingResponse?) -> Void, onError: @escaping (ModelErrorMovies) -> Void) {
+    func loadTopRated(page: Int = 1, onComplete: @escaping (AllMoviesResponse?) -> Void, onError: @escaping (ModelErrorMovies) -> Void) {
         let topUrl = NetworkServicesMovies.baseURL + "trending/all/day?api_key=\(NetworkServicesMovies.apiKey)&language=\(NetworkServicesMovies.language)&page=\(page)"
         print(topUrl)
         guard let topUrl = URL(string: topUrl) else {
@@ -61,7 +60,7 @@ class NetworkServicesMovies {
                     return }
                 
                 do {
-                    let trendingMovies = try JSONDecoder().decode(TrendingResponse.self, from: data)
+                    let trendingMovies = try JSONDecoder().decode(AllMoviesResponse.self, from: data)
                     onComplete(trendingMovies)
                 }
                 catch {
@@ -105,35 +104,6 @@ class NetworkServicesMovies {
         }
     }
     
-    //    func getMovieDetails(movieID: Int,onComplete: @escaping (MovieDetailsResponse?) -> Void, onError: @escaping (ModelErrorMovies) -> Void) {
-    //
-    //        let movieURL = NetworkServicesMovies.baseURL + "movie/\(movieID)?api_key=\(NetworkServicesMovies.apiKey)&language=\(NetworkServicesMovies.language)"
-    //        print(movieURL)
-    //        guard let movieURL = URL(string: movieURL) else {
-    //            onError(.url)
-    //            return
-    //        }
-    //
-    //        AF.request(movieURL).responseJSON { (response) in
-    //            if response.response?.statusCode == 200 {
-    //                guard let data = response.data else {
-    //                    onError(.noData)
-    //                    return }
-    //
-    //                do {
-    //                    let infoMovies = try JSONDecoder().decode(MovieDetailsResponse.self, from: data)
-    //                    onComplete(infoMovies)
-    //                } catch {
-    //                    print(error.localizedDescription)
-    //                    onError(.invalidJSON)
-    //                }
-    //
-    //            } else {
-    //                onError(.responseStatusCode(code: response.response?.statusCode ?? 0))
-    //
-    //            }
-    //        }
-    //    }
     
     func getGenres(onComplete: @escaping (GenresResponse) -> Void, onError: @escaping (ModelErrorMovies) -> Void) {
         let genreURL = NetworkServicesMovies.baseURL + "\("genre/movie/list")?api_key=\(NetworkServicesMovies.apiKey)&language=\(NetworkServicesMovies.language)"
@@ -165,5 +135,5 @@ class NetworkServicesMovies {
         }
     }
 }
-    
+
     

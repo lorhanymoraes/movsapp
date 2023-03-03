@@ -13,12 +13,12 @@ class TopCollectionViewCell: UICollectionViewCell {
     @IBOutlet var lbTitle: UILabel!
     @IBOutlet var lbNumber: UILabel!
     
-    func prepareCell(with movie: TrendingResult) {
+    func prepareCell(with movie: MoviesResult) {
         lbTitle.text = movie.originalTitle
         ivTop10.layer.cornerRadius = 10
         
         
-        if let url = URL(string: "https://image.tmdb.org/t/p/w300\(movie.posterPath ?? "")") {
+        if let url = URL(string: "https://image.tmdb.org/t/p/w500\(movie.posterPath ?? "")") {
             ivTop10.kf.indicatorType = .activity
             ivTop10.kf.setImage(with: url)
         } else {

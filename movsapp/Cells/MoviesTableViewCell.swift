@@ -17,10 +17,10 @@ class MoviesTableViewCell: UITableViewCell {
     override func awakeFromNib() {
         super.awakeFromNib()
     }
-
+    
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
+        
     }
     
     func prepareCell(with movie: MoviesResult) {
@@ -29,7 +29,7 @@ class MoviesTableViewCell: UITableViewCell {
         
         var posterUrlString: String? {
             if let posterPath = movie.posterPath {
-                return "https://image.tmdb.org/t/p/w300\(posterPath)"
+                return "https://image.tmdb.org/t/p/w500\(posterPath)"
             }
             return nil
         }
@@ -42,5 +42,4 @@ class MoviesTableViewCell: UITableViewCell {
             ivMovie.image = nil
         }
     }
-
 }
