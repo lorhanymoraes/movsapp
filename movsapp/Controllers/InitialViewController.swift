@@ -48,15 +48,14 @@ class InitialViewController: UIViewController, UITableViewDelegate, UITableViewD
         return initialViewPresenter.tableView(tableView, willDisplay: cell, forRowAt: indexPath)
     }
     
-
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "segueAllBooks" {
-            guard let controller = segue.destination as? DetailsViewController else {return}
+            guard let controller = segue.destination as? DetailsViewController else { return }
             let showDetail = initialViewPresenter.allMovies?.results?[tableViewAllMovies.indexPathForSelectedRow?.row ?? 0]
             controller.detailsViewPresenter.moviesInfo = showDetail
 
         } else {
-            guard let controller = segue.destination as? DetailsViewController else {return}
+            guard let controller = segue.destination as? DetailsViewController else { return }
             let showTop10 = initialViewPresenter.trendingResponse?.results?[collectionViewTop10.indexPathsForSelectedItems?.first?.row ?? 0]
             controller.detailsViewPresenter.moviesInfo = showTop10
         }

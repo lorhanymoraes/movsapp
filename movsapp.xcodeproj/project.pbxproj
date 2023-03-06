@@ -16,7 +16,6 @@
 		0DA8385629401CAF008DC854 /* FavoritesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA8385529401CAF008DC854 /* FavoritesViewController.swift */; };
 		0DA8385829401CD1008DC854 /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA8385729401CD1008DC854 /* DetailsViewController.swift */; };
 		0DA8385E29401D8E008DC854 /* InitialViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA8385D29401D8E008DC854 /* InitialViewPresenter.swift */; };
-		0DA8386029401D9E008DC854 /* FavoritesViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA8385F29401D9E008DC854 /* FavoritesViewPresenter.swift */; };
 		0DA8386229401DAC008DC854 /* DetailsViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA8386129401DAC008DC854 /* DetailsViewPresenter.swift */; };
 		0DA8386429401DE4008DC854 /* TopCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA8386329401DE4008DC854 /* TopCollectionViewCell.swift */; };
 		0DA8386629401DFF008DC854 /* MoviesTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA8386529401DFF008DC854 /* MoviesTableViewCell.swift */; };
@@ -26,6 +25,7 @@
 		0DA8386E29401EB4008DC854 /* PersistenceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA8386D29401EB4008DC854 /* PersistenceManager.swift */; };
 		0DA8387029401F0A008DC854 /* GenresResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA8386F29401F0A008DC854 /* GenresResponse.swift */; };
 		0DA8DF942989956500D894C1 /* ModelErrorMovies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DA8DF932989956500D894C1 /* ModelErrorMovies.swift */; };
+		0DABEF8829B2B0D7005E24AE /* FavoritesViewPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DABEF8729B2B0D7005E24AE /* FavoritesViewPresenter.swift */; };
 		DCD2F23620CBB9F7676A5FCA /* Pods_movsapp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 30D9C73DE8DC4F5BE087BEC3 /* Pods_movsapp.framework */; };
 /* End PBXBuildFile section */
 
@@ -41,7 +41,6 @@
 		0DA8385529401CAF008DC854 /* FavoritesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewController.swift; sourceTree = "<group>"; };
 		0DA8385729401CD1008DC854 /* DetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
 		0DA8385D29401D8E008DC854 /* InitialViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InitialViewPresenter.swift; sourceTree = "<group>"; };
-		0DA8385F29401D9E008DC854 /* FavoritesViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewPresenter.swift; sourceTree = "<group>"; };
 		0DA8386129401DAC008DC854 /* DetailsViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailsViewPresenter.swift; sourceTree = "<group>"; };
 		0DA8386329401DE4008DC854 /* TopCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopCollectionViewCell.swift; sourceTree = "<group>"; };
 		0DA8386529401DFF008DC854 /* MoviesTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoviesTableViewCell.swift; sourceTree = "<group>"; };
@@ -51,6 +50,7 @@
 		0DA8386D29401EB4008DC854 /* PersistenceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceManager.swift; sourceTree = "<group>"; };
 		0DA8386F29401F0A008DC854 /* GenresResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenresResponse.swift; sourceTree = "<group>"; };
 		0DA8DF932989956500D894C1 /* ModelErrorMovies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModelErrorMovies.swift; sourceTree = "<group>"; };
+		0DABEF8729B2B0D7005E24AE /* FavoritesViewPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewPresenter.swift; sourceTree = "<group>"; };
 		30D9C73DE8DC4F5BE087BEC3 /* Pods_movsapp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_movsapp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		64BE68A602E90CC973FD76DE /* Pods-movsapp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-movsapp.debug.xcconfig"; path = "Target Support Files/Pods-movsapp/Pods-movsapp.debug.xcconfig"; sourceTree = "<group>"; };
 		78484D6B3279B31EF04F1DBD /* Pods-movsapp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-movsapp.release.xcconfig"; path = "Target Support Files/Pods-movsapp/Pods-movsapp.release.xcconfig"; sourceTree = "<group>"; };
@@ -146,8 +146,8 @@
 			isa = PBXGroup;
 			children = (
 				0DA8385D29401D8E008DC854 /* InitialViewPresenter.swift */,
+				0DABEF8729B2B0D7005E24AE /* FavoritesViewPresenter.swift */,
 				0DA8386129401DAC008DC854 /* DetailsViewPresenter.swift */,
-				0DA8385F29401D9E008DC854 /* FavoritesViewPresenter.swift */,
 			);
 			path = Presenters;
 			sourceTree = "<group>";
@@ -299,7 +299,6 @@
 				0DA8386429401DE4008DC854 /* TopCollectionViewCell.swift in Sources */,
 				0DA8385E29401D8E008DC854 /* InitialViewPresenter.swift in Sources */,
 				0DA8386629401DFF008DC854 /* MoviesTableViewCell.swift in Sources */,
-				0DA8386029401D9E008DC854 /* FavoritesViewPresenter.swift in Sources */,
 				0DA8DF942989956500D894C1 /* ModelErrorMovies.swift in Sources */,
 				0DA8386E29401EB4008DC854 /* PersistenceManager.swift in Sources */,
 				0D92163F293FFAA600A50DEB /* InitialViewController.swift in Sources */,
@@ -307,6 +306,7 @@
 				0DA8385629401CAF008DC854 /* FavoritesViewController.swift in Sources */,
 				0D92163D293FFAA600A50DEB /* SceneDelegate.swift in Sources */,
 				0DA8387029401F0A008DC854 /* GenresResponse.swift in Sources */,
+				0DABEF8829B2B0D7005E24AE /* FavoritesViewPresenter.swift in Sources */,
 				0DA8386229401DAC008DC854 /* DetailsViewPresenter.swift in Sources */,
 				0DA8385829401CD1008DC854 /* DetailsViewController.swift in Sources */,
 			);

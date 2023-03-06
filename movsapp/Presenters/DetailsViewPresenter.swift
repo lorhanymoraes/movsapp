@@ -21,7 +21,6 @@ class DetailsViewPresenter {
     var allGenres: GenresResponse?
     var idGenre: [GenresResponse] = []
     var movieID: Int?
-//    var isMovieFav = UserDefaults.standard.bool(forKey: "favorites2")
     var favoritesMovie = [MoviesResult]()
     
     func getGenre() {
@@ -71,7 +70,7 @@ class DetailsViewPresenter {
     
     func addMovieToFavorites(with movie: MoviesResult) {
         
-        let favoritedMovie = MoviesResult(posterPath: movie.posterPath, adult: movie.adult, overview: movie.overview, releaseDate: movie.releaseDate, genreIds: movie.genreIds ?? moviesInfo?.genreIds, id: movie.id, originalTitle: movie.originalTitle, originalLanguage: movie.originalTitle, title: movie.title, backdropPath: movie.backdropPath, popularity: movie.popularity, voteCount: movie.voteCount, video: movie.video, voteAverage: movie.voteAverage, runtime: movie.runtime)
+        let favoritedMovie = MoviesResult(posterPath: movie.posterPath, adult: movie.adult, overview: movie.overview, releaseDate: movie.releaseDate, genreIds: movie.genreIds ?? moviesInfo?.genreIds, id: movie.id, originalTitle: movie.originalTitle, originalLanguage: movie.originalTitle, title: movie.title, backdropPath: movie.backdropPath, popularity: movie.popularity, voteCount: movie.voteCount, video: movie.video, voteAverage: movie.voteAverage, runtime: movie.runtime ?? moviesInfo?.runtime)
 
         PersistenceManager.updateWith(favoritedMovie: favoritedMovie, actionType: .add) { [weak self] error in
             guard self != nil else { return }
@@ -80,6 +79,26 @@ class DetailsViewPresenter {
                 return
             }
             
+        }
+    }
+    
+    func getFavoritesButton() {
+        NetworkServicesMovies.shared.getMovieInfo(movieID: moviesInfo?.id ?? 0, onComplete: { (movie) in
+            
+            if let movie = movie {
+                
+                dump(movie)
+                self.addMovieToFavorites(with: movie)
+            }
+            
+        })  { (error) in
+            switch error {
+            case .unableToFavorite:
+                print("\(ModelErrorMovies.unableToFavorite)")
+            default:
+                print(error)
+                
+            }
         }
     }
 

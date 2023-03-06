@@ -30,6 +30,7 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
         tableViewFavorites.reloadData()
         getFavorites()
         labelNoFavorites()
+//        favoritesViewPresenter.getFavorites()
     }
     
     func setupView() {
@@ -40,21 +41,21 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func labelNoFavorites() {
-        lbNoFavorites = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 40))
-        lbNoFavorites?.center = CGPoint(x: 200, y: 400)
+        lbNoFavorites = UILabel(frame: CGRect(x: 0, y: 0, width: 200, height: 60))
         lbNoFavorites?.text = "No Movies?\nSearch and add a new one"
         lbNoFavorites?.textAlignment = .center
         lbNoFavorites?.adjustsFontSizeToFitWidth = true
         lbNoFavorites?.numberOfLines = 0
         lbNoFavorites?.textColor = .white
         lbNoFavorites?.font = UIFont.preferredFont(forTextStyle: .footnote)
+
         
     }
     
     @IBAction func btUnfavorite(_ sender: UIButton) {
         
         let point = sender.convert(CGPoint.zero, to: tableViewFavorites)
-        guard let indexPath = tableViewFavorites.indexPathForRow(at: point) else {return}
+        guard let indexPath = tableViewFavorites.indexPathForRow(at: point) else { return }
         
         PersistenceManager.updateWith(favoritedMovie: favoritedMovies[indexPath.row], actionType: .remove) { [weak self] error in
             
@@ -66,19 +67,6 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
                 self.tableViewFavorites.deleteRows(at: [IndexPath(row: indexPath.row, section: 0)], with: .left)
                 self.tableViewFavorites.reloadData()
                 return
-            }
-        }
-    }
-    
-    func updateUI(with favoritedMovies: [MoviesResult]) {
-        if favoritedMovies.isEmpty {
-            self.lbNoFavorites?.isHidden = false
-            return
-        } else {
-            self.favoritedMovies = favoritedMovies
-            self.lbNoFavorites?.isHidden = true
-            DispatchQueue.main.async {
-                self.tableViewFavorites.reloadData()
             }
         }
     }
@@ -95,6 +83,19 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
             
         }
     }
+    
+    func updateUI(with favoritedMovies: [MoviesResult]) {
+        if favoritedMovies.isEmpty {
+            self.lbNoFavorites?.isHidden = false
+            return
+        } else {
+            self.favoritedMovies = favoritedMovies
+            self.lbNoFavorites?.isHidden = true
+            DispatchQueue.main.async {
+                self.tableViewFavorites.reloadData()
+            }
+        }
+    } 
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if favoritedMovies.count > 0 {
@@ -127,8 +128,9 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
 }
 
 extension FavoritesViewController: FavoritesViewPresenterDelegate {
-    func loadFavorites(with: [MoviesResult]) {
+    func updateFavorites(with favoritedMovies: [MoviesResult]) {
         updateUI(with: favoritedMovies)
     }
+    
     
 }

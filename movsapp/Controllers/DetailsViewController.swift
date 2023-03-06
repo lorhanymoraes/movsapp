@@ -51,24 +51,10 @@ class DetailsViewController: UIViewController {
     }
     
     @IBAction func btActionFavorite(_ sender: UIButton) {
-        NetworkServicesMovies.shared.getMovieInfo(movieID: detailsViewPresenter.moviesInfo?.id ?? 0, onComplete: { (movie) in
-            
-            if let movie = movie {
-                
-                dump(movie)
-                self.detailsViewPresenter.addMovieToFavorites(with: movie)
-                self.btFavorite.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-            }
-            
-        })  { (error) in
-            switch error {
-            case .unableToFavorite:
-                print("\(ModelErrorMovies.unableToFavorite)")
-            default:
-                print(error)
-                
-            }
-        }
+        
+        detailsViewPresenter.getFavoritesButton()
+        self.btFavorite.setImage(UIImage(systemName: "heart.fill"), for: .normal)
+
     }
     
     func viewConfiguration() {
@@ -123,6 +109,7 @@ class DetailsViewController: UIViewController {
         }
         self.lbYear.text = releaseYear
     }
+    
     func imagesConfiguration() {
         var posterUrlString: String? {
             if let posterPath = detailsViewPresenter.moviesInfo?.posterPath {
