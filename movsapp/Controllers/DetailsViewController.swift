@@ -35,10 +35,6 @@ class DetailsViewController: UIViewController {
         detailsViewPresenter.getGenre()
         detailsViewPresenter.getFavorites()
         detailsViewPresenter.getMoviesInfo()
-        viewConfiguration()
-        imagesConfiguration()
-        formattedStrings()
-        changeButton()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -54,13 +50,12 @@ class DetailsViewController: UIViewController {
         
         detailsViewPresenter.getFavoritesButton()
         self.btFavorite.setImage(UIImage(systemName: "heart.fill"), for: .normal)
-
     }
     
     func viewConfiguration() {
         viewScore.layer.cornerRadius = viewScore.frame.size.height/2
-        lbTitle.text = detailsViewPresenter.moviesInfo?.originalTitle
-        lbOverview.text = detailsViewPresenter.moviesInfo?.overview
+        lbTitle.text = detailsViewPresenter.detailsMovies?.originalTitle
+        lbOverview.text = detailsViewPresenter.detailsMovies?.overview
         loading.stopAnimating()
         
         viewsGenres.forEach { view in
@@ -73,7 +68,7 @@ class DetailsViewController: UIViewController {
     func formattedStrings() {
         
         var lbRuntimeString: String? {
-            if let runtime = detailsViewPresenter.moviesInfo?.runtime {
+            if let runtime = detailsViewPresenter.detailsMovies?.runtime {
                 return String(runtime)
             }
             return nil
@@ -82,7 +77,7 @@ class DetailsViewController: UIViewController {
         self.lbRunTime.text = "Runtime: " + (lbRuntimeString ?? " ") + " min"
         
         var voteAverageString: String? {
-            if let vote = detailsViewPresenter.moviesInfo?.voteAverage?.rounded() {
+            if let vote = detailsViewPresenter.detailsMovies?.voteAverage?.rounded() {
                 return String(vote)
             }
             return nil
@@ -91,7 +86,7 @@ class DetailsViewController: UIViewController {
         self.lbScore.text = voteAverageString
         
         var formattedReleaseDate: Date? {
-            if let releaseDate = detailsViewPresenter.moviesInfo?.releaseDate  {
+            if let releaseDate = detailsViewPresenter.detailsMovies?.releaseDate  {
                 let dateFormatter = DateFormatter()
                 dateFormatter.dateFormat = "YYYY-MM-DD"
                 return dateFormatter.date(from: releaseDate)
@@ -112,14 +107,14 @@ class DetailsViewController: UIViewController {
     
     func imagesConfiguration() {
         var posterUrlString: String? {
-            if let posterPath = detailsViewPresenter.moviesInfo?.posterPath {
+            if let posterPath = detailsViewPresenter.detailsMovies?.posterPath {
                 return "https://image.tmdb.org/t/p/w500\(posterPath)"
             }
             return nil
         }
         
         var backUrlString: String? {
-            if let backdropPath = detailsViewPresenter.moviesInfo?.backdropPath  {
+            if let backdropPath = detailsViewPresenter.detailsMovies?.backdropPath  {
                 return "https://image.tmdb.org/t/p/w500\(backdropPath)"
             }
             return nil
@@ -157,7 +152,7 @@ class DetailsViewController: UIViewController {
     
     func isMovieFavorited() -> Bool {
         detailsViewPresenter.favoritesMovie.contains { favorito in
-            favorito.id == detailsViewPresenter.moviesInfo?.id
+            favorito.id == detailsViewPresenter.detailsMovies?.id
         }
     }
     
@@ -172,6 +167,12 @@ class DetailsViewController: UIViewController {
 }
 
 extension DetailsViewController: DetailsViewPresenterDelegate {
+    func updateUIWithDetails() {
+        viewConfiguration()
+        imagesConfiguration()
+        formattedStrings()
+        changeButton()
+    }
     
     func filterGenres() {
         filterGenresConfig()

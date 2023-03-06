@@ -18,27 +18,27 @@ class FavoritesViewPresenter {
     var favoritedMovies: [MoviesResult] = []
     var moviesResult: MoviesResult?
     
-//    func getFavorites() {
-//        PersistenceManager.retrieveFavorites { [weak self] result in
-//            guard let self = self else { return }
-//            switch result {
-//            case .success(let favorites):
-//                self.delegate?.updateFavorites(with: favorites)
-////                self.updateUI(with: favorites)
-//            case .failure(let error):
-//                print(error.localizedDescription)
-//            }
-//            
-//        }
-//    }
-//    
-//    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-//        
-//        guard let cell = tableView.dequeueReusableCell(withIdentifier: "favoritesCell", for: indexPath) as? FavoritesTableViewCell else { return .init()}
-//        
-//        let favoritedMovie = moviesResult[indexPath.row]
-//        cell.setTextAndImageFor(favorite: favoritedMovie)
-//        
-//        return cell
-//    }
+    func getFavorites() {
+        PersistenceManager.retrieveFavorites { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let favorites):
+                self.favoritedMovies = favorites
+                self.delegate?.updateFavorites(with: favorites)
+            case .failure(let error):
+                print(error.localizedDescription)
+            }
+            
+        }
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "favoritesCell", for: indexPath) as? FavoritesTableViewCell else { return .init()}
+        
+        let favoritedMovie = favoritedMovies[indexPath.row]
+        cell.setTextAndImageFor(favorite: favoritedMovie)
+        
+        return cell
+    }
 }

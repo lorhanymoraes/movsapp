@@ -15,8 +15,6 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     @IBOutlet weak var tableViewFavorites: UITableView!
     
     var lbNoFavorites: UILabel?
-    var favoritedMovies: [MoviesResult] = []
-    var findError: ModelErrorMovies?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,10 +25,7 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableViewFavorites.reloadData()
-        getFavorites()
-        labelNoFavorites()
-//        favoritesViewPresenter.getFavorites()
+        favoritesViewPresenter.getFavorites()
     }
     
     func setupView() {
@@ -48,8 +43,6 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
         lbNoFavorites?.numberOfLines = 0
         lbNoFavorites?.textColor = .white
         lbNoFavorites?.font = UIFont.preferredFont(forTextStyle: .footnote)
-
-        
     }
     
     @IBAction func btUnfavorite(_ sender: UIButton) {
@@ -57,39 +50,20 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
         let point = sender.convert(CGPoint.zero, to: tableViewFavorites)
         guard let indexPath = tableViewFavorites.indexPathForRow(at: point) else { return }
         
-        PersistenceManager.updateWith(favoritedMovie: favoritedMovies[indexPath.row], actionType: .remove) { [weak self] error in
+        PersistenceManager.updateWith(favoritedMovie: favoritesViewPresenter.favoritedMovies[indexPath.row], actionType: .remove) { [weak self] error in
             
             guard let self = self else { return }
             
-            guard let error = self.findError else {
-                
-                self.favoritedMovies.remove(at: indexPath.row)
-                self.tableViewFavorites.deleteRows(at: [IndexPath(row: indexPath.row, section: 0)], with: .left)
-                self.tableViewFavorites.reloadData()
-                return
-            }
-        }
-    }
-    
-    func getFavorites() {
-        PersistenceManager.retrieveFavorites { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case .success(let favorites):
-                self.updateUI(with: favorites)
-            case .failure(let error):
-                print(error.localizedDescription)
-            }
-            
+            self.favoritesViewPresenter.favoritedMovies.remove(at: indexPath.row)
+            self.tableViewFavorites.deleteRows(at: [IndexPath(row: indexPath.row, section: 0)], with: .left)
+            self.tableViewFavorites.reloadData()
         }
     }
     
     func updateUI(with favoritedMovies: [MoviesResult]) {
         if favoritedMovies.isEmpty {
             self.lbNoFavorites?.isHidden = false
-            return
         } else {
-            self.favoritedMovies = favoritedMovies
             self.lbNoFavorites?.isHidden = true
             DispatchQueue.main.async {
                 self.tableViewFavorites.reloadData()
@@ -98,28 +72,22 @@ class FavoritesViewController: UIViewController, UITableViewDelegate, UITableVie
     } 
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if favoritedMovies.count > 0 {
-            return favoritedMovies.count
+        if favoritesViewPresenter.favoritedMovies.count > 0 {
+            return favoritesViewPresenter.favoritedMovies.count
         } else {
             tableView.backgroundView = lbNoFavorites
         }
-        return favoritedMovies.count
+        return favoritesViewPresenter.favoritedMovies.count
     }
+    
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "favoritesCell", for: indexPath) as? FavoritesTableViewCell else { return .init()}
-        
-        let favoritedMovie = favoritedMovies[indexPath.row]
-        cell.setTextAndImageFor(favorite: favoritedMovie)
-        
-        return cell
+        return favoritesViewPresenter.tableView(tableView, cellForRowAt: indexPath)
     }
-    
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         guard let viewController = segue.destination as? DetailsViewController else {return}
-        let favoriteMovie = favoritedMovies[tableViewFavorites.indexPathForSelectedRow?.row ?? 0]
+        let favoriteMovie = favoritesViewPresenter.favoritedMovies[tableViewFavorites.indexPathForSelectedRow?.row ?? 0]
         viewController.detailsViewPresenter.moviesInfo = favoriteMovie
         navigationController?.pushViewController(viewController, animated: true)
         
@@ -131,6 +99,5 @@ extension FavoritesViewController: FavoritesViewPresenterDelegate {
     func updateFavorites(with favoritedMovies: [MoviesResult]) {
         updateUI(with: favoritedMovies)
     }
-    
     
 }

@@ -10,6 +10,7 @@ import UIKit
 
 protocol DetailsViewPresenterDelegate {
     func filterGenres()
+    func updateUIWithDetails()
 }
 
 class DetailsViewPresenter {
@@ -40,7 +41,7 @@ class DetailsViewPresenter {
     func getMoviesInfo() {
         NetworkServicesMovies.shared.getMovieInfo(movieID: moviesInfo?.id ?? trendingInfo?.id ?? 1, onComplete: { (movies) in
             self.detailsMovies = movies
-
+            self.delegate?.updateUIWithDetails()
         }) { (error) in
             switch error {
             case .noResponse:
@@ -101,8 +102,5 @@ class DetailsViewPresenter {
             }
         }
     }
-
-
-    
-    }
+}
     
